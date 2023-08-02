@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWAPI</title>
+  <link rel="stylesheet" href="css/main.css">
+  <script defer src="app.js"></script>
+  <script defer src="node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+  <link rel="icon" type="image/x-icon" href="favicon.png">
+</head>
+
+<body>
+
+  <!-- Modal -->
+  <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <select class="form-select d-none mb-3" id="search-select" aria-label="Default select example">
+            <option selected>choose what to look for</option>
+            <option value="people">characters</option>
+            <option value="planets">planets</option>
+            <option value="starships">starships</option>
+            <option value="films">films</option>
+            <option value="vehicles">vehicles</option>
+            <option value="species">species</option>
+          </select>
+          <div class="input-group mb-3 d-none" id="search-input-group">
+            <span class="input-group-text" id="basic-addon1"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg></span>
+            <input type="text" id="search-input" class="form-control" placeholder="search" aria-label="search"
+              aria-describedby="basic-addon1">
+          </div>
+          <div id="modal-spinner" class="d-flex align-items-center justify-content-center">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+
+          <table class="table table-hover">
+            <thead></thead>
+            <tbody id="modal-table">
+
+            </tbody>
+          </table>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header data-bs-theme="dark">
+    <div class="collapse text-bg-dark" id="navbarHeader">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-8 col-md-7 py-4">
+            <h4>About</h4>
+            <p class="text-body-secondary">This is a Star Wars database. Made by using <a
+                href="https://swapi.dev/">SWAPI</a> and sloppy javascript code.
+            </p>
+          </div>
+          <div class="col-sm-4 offset-md-1 py-4">
+            <h4>Useful links</h4>
+            <ul class="list-unstyled">
+              <li><a href="https://starwars.fandom.com/wiki/Main_Page" class="text-white">Wookieepedia</a></li>
+              <li><a href="https://www.reddit.com/r/PrequelMemes/" class="text-white">Prequel Memes</a></li>
+              <li><a href="https://www.youtube.com/@StarWars" class="text-white">Star Wars youtube channel</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navbar navbar-dark bg-dark shadow-sm">
+      <div class="container">
+        <a href="#" class="navbar-brand d-flex align-items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512">
+            <style>
+              svg {
+                fill: #ffffff
+              }
+            </style>
+            <path
+              d="M0 96C0 43 43 0 96 0H384h32c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32v64c17.7 0 32 14.3 32 32s-14.3 32-32 32H384 96c-53 0-96-43-96-96V96zM64 416c0 17.7 14.3 32 32 32H352V384H96c-17.7 0-32 14.3-32 32zm90.4-234.4l-21.2-21.2c-3 10.1-5.1 20.6-5.1 31.6c0 .2 0 .5 .1 .8s.1 .5 .1 .8L165.2 226c2.5 2.1 3.4 5.8 2.3 8.9c-1.3 3-4.1 5.1-7.5 5.1c-1.9-.1-3.8-.8-5.2-2l-23.6-20.6C142.8 267 186.9 304 240 304s97.3-37 108.9-86.6L325.3 238c-1.4 1.2-3.3 2-5.3 2c-2.2-.1-4.4-1.1-6-2.8c-1.2-1.5-1.9-3.4-2-5.2c.1-2.2 1.1-4.4 2.8-6l37.1-32.5c0-.3 0-.5 .1-.8s.1-.5 .1-.8c0-11-2.1-21.5-5.1-31.6l-21.2 21.2c-3.1 3.1-8.1 3.1-11.3 0s-3.1-8.1 0-11.2l26.4-26.5c-8.2-17-20.5-31.7-35.9-42.6c-2.7-1.9-6.2 1.4-5 4.5c8.5 22.4 3.6 48-13 65.6c-3.2 3.4-3.6 8.9-.9 12.7c9.8 14 12.7 31.9 7.5 48.5c-5.9 19.4-22 34.1-41.9 38.3l-1.4-34.3 12.6 8.6c.6 .4 1.5 .6 2.3 .6c1.5 0 2.7-.8 3.5-2s.6-2.8-.1-4L260 225.4l18-3.6c1.8-.4 3.1-2.1 3.1-4s-1.4-3.5-3.1-3.9l-18-3.7 8.5-14.3c.8-1.2 .9-2.9 .1-4.1s-2-2-3.5-2l-.1 0c-.7 .1-1.5 .3-2.1 .7l-14.1 9.6L244 87.9c-.1-2.2-1.9-3.9-4-3.9s-3.9 1.6-4 3.9l-4.6 110.8-12-8.1c-1.5-1.1-3.6-.9-5 .4s-1.6 3.4-.8 5l8.6 14.3-18 3.7c-1.8 .4-3.1 2-3.1 3.9s1.4 3.6 3.1 4l18 3.8-8.6 14.2c-.2 .6-.5 1.4-.5 2c0 1.1 .5 2.1 1.2 3c.8 .6 1.8 1 2.8 1c.7 0 1.6-.2 2.2-.6l10.4-7.1-1.4 32.8c-19.9-4.1-36-18.9-41.9-38.3c-5.1-16.6-2.2-34.4 7.6-48.5c2.7-3.9 2.3-9.3-.9-12.7c-16.6-17.5-21.6-43.1-13.1-65.5c1.2-3.1-2.3-6.4-5-4.5c-15.3 10.9-27.6 25.6-35.8 42.6l26.4 26.5c3.1 3.1 3.1 8.1 0 11.2s-8.1 3.1-11.2 0z" />
+          </svg>
+          <strong class="logo-title">SWDB</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader"
+          aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="py-2 text-center container">
+      <div class="row py-lg-2">
+        <div class="col-lg-6 col-md-8 mx-auto">
+          <h1 class="fw-light">Star Wars database</h1>
+          <p class="lead text-body-secondary">this is written in javascript so... may the force be with you</p>
+          <p>
+            <button href="#" data-bs-toggle="modal" data-bs-target="#modal" id="search-btn"
+              class="btn btn-primary my-2">Search</button>
+            <button href="#" data-bs-toggle="modal" data-bs-target="#modal" id="lucky-btn"
+              class="btn btn-secondary my-2">I'm feeling lucky</button>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-2 text-center container col-lg-6 col-md-8 col-sm-10">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-link="people" aria-current="page" href="#">Characters</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-link="planets" href="#">Planets</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-link="starships" href="#">Starships</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-link="films" href="#">Films</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-link="vehicles" href="#">Vehicles</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-link="species" href="#">Species</a>
+        </li>
+      </ul>
+
+      <br>
+
+      <div id="spinner" class="d-flex align-items-center justify-content-center d-none">
+        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <ul class="list-group">
+
+      </ul>
+
+      <br>
+
+      <nav aria-label="page navigation" class="d-none">
+        <ul class="pagination">
+          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item"><a class="page-link me-2" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link me-2 disabled" href="#">...</a></li>
+          <li class="page-item"><a class="page-link" href="#">8</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </section>
+  </main>
+
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+{
+    "name": "sw",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "sass": "sass scss:css"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nikolay7424/Orlov_Mykola_frontend-pro_dz28.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/nikolay7424/Orlov_Mykola_frontend-pro_dz28/issues"
+    },
+    "homepage": "https://github.com/nikolay7424/Orlov_Mykola_frontend-pro_dz28#readme",
+    "dependencies": {
+        "bootstrap": "^5.3.1",
+        "sass": "^1.64.1"
+    }
+}
