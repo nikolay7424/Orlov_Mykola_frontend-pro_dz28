@@ -246,11 +246,15 @@ function renderModal(dataObj) {
             luckyBtnHandler()
             return
         }
+
         let buttonIndex = 0
         const tr = document.createElement("tr")
         const thKey = document.createElement("th")
         thKey.textContent = property
         const tdValue = document.createElement("td")
+        if (property === "name") {
+            tr.classList.add("table-primary")
+        }
         if (Array.isArray(dataObj[property]) && dataObj[property].length > 0) {
             dataObj[property].forEach((element) => {
                 addButton(buttonIndex, element, tdValue)
@@ -339,6 +343,7 @@ function searchSelectHandler(e) {
 
 function renderSearchResults(results) {
     modalSpinner.classList.add("d-none")
+    modalTable.innerHTML = ""
     results.forEach((result) => {
         renderModal(result)
     })
